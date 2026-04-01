@@ -1,16 +1,38 @@
-# React + Vite
+# 💹 Finance Harmony Hub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium, interactive, and responsive **Finance Dashboard** built with **React.js** and **Tailwind CSS**. Designed to help users track income, manage expenses, and visualize financial trends with a modern Glassmorphism UI.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Key Features
 
-## React Compiler
+* **Executive Summary Cards:** Real-time dynamic calculation of Total Balance, Income, and Expenses using React Context API.
+* **Data Visualizations (Recharts):**
+    * **Balance Trend:** A smooth Line/Area chart comparing monthly income vs expenses.
+    * **Spending Breakdown:** A categorical Donut chart representing expense distribution by category.
+* **Role-Based UI (RBAC Simulation):**
+    * **Viewer Mode:** Read-only access to financial data.
+    * **Admin Mode:** Full access to **Add**, **Edit**, and **Delete** transactions.
+* **Smart Insights:** Automated observations such as Total Savings and Average Monthly Expense.
+* **Transaction Management:** * Real-time search and filtering.
+    * Interactive transaction details modal.
+    * Persistent data storage using **Browser LocalStorage**.
+* **Theme Support:** Fully functional **Dark/Light Mode** toggle.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Frontend:** React.js (Vite)
+* **Styling:** Tailwind CSS
+* **State Management:** React Context API
+* **Charts:** Recharts
+* **Icons:** Lucide-React
+
+---
+
+## ⚙️ Setup & Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/aasthag01-26/finance.git](https://github.com/aasthag01-26/finance.git)
