@@ -36,3 +36,10 @@ A premium, interactive, and responsive **Finance Dashboard** built with **React.
 1. **Clone the repository:**
    ```bash
    git clone [https://github.com/aasthag01-26/finance.git](https://github.com/aasthag01-26/finance.git)
+2. **Install dependencies:**
+   ```bash
+   npm install
+3. **Run the development server:**
+   ```bash
+   npm run dev
+
