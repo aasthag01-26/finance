@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 
-const AppContext = createContext();
+export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   // 1. Lazy Initialization: Initial state define karne ka best tarika
