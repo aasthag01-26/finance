@@ -7,6 +7,15 @@ const TransactionTable = () => {
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
 
+  // 🔄 Reset logic
+  const handleReset = () => {
+    if (window.confirm("Are you sure you want to clear all data and reset to default?")) {
+      setTransactions([]); 
+      localStorage.removeItem("transactions");
+      alert("Dashboard has been reset!");
+    }
+  };
+
   // 🔍 Filter logic
   const filtered = transactions.filter((t) =>
     t.description.toLowerCase().includes(search.toLowerCase())
@@ -20,6 +29,7 @@ const TransactionTable = () => {
 
   // 📤 Export logic
   const handleExport = () => {
+    if (transactions.length === 0) return alert("No data to export!");
     const csv = Papa.unparse(transactions);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -45,7 +55,6 @@ const TransactionTable = () => {
             category: row.Category || "Other",
             type: row.Type?.toLowerCase() === "income" ? "income" : "expense"
           }));
-          
           setTransactions([...transactions, ...newData]);
           alert(`${newData.length} transactions imported successfully!`);
         },
@@ -68,18 +77,26 @@ const TransactionTable = () => {
         </div>
 
         <div className="flex gap-3 w-full md:w-auto">
-          {/* 📥 Import Label (acts as button) */}
-          <label className="flex-1 md:flex-none cursor-pointer bg-blue-600/10 border border-blue-500/30 text-blue-400 px-6 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2">
-            <span>Import CSV</span>
+          {/* 🔄 Reset Button */}
+          <button
+            onClick={handleReset}
+            className="px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl hover:bg-red-500 hover:text-white transition-all text-sm font-bold"
+          >
+            Reset
+          </button>
+
+          {/* 📥 Import Label */}
+          <label className="flex-1 md:flex-none cursor-pointer bg-blue-600/10 border border-blue-500/30 text-blue-400 px-6 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all text-center">
+            Import CSV
             <input type="file" accept=".csv" onChange={handleImport} className="hidden" />
           </label>
 
           {/* 📤 Export Button */}
           <button
             onClick={handleExport}
-            className="flex-1 md:flex-none bg-gray-800 hover:bg-gray-700 text-gray-300 px-6 py-2 rounded-xl border border-gray-700 transition-all text-sm font-medium flex items-center justify-center gap-2"
+            className="flex-1 md:flex-none bg-gray-800 hover:bg-gray-700 text-gray-300 px-6 py-2 rounded-xl border border-gray-700 transition-all text-sm font-medium"
           >
-            <span>Export CSV</span>
+            Export CSV
           </button>
         </div>
       </div>
@@ -100,10 +117,10 @@ const TransactionTable = () => {
             {filtered.map((t) => (
               <tr 
                 key={t.id} 
-                className="hover:bg-gray-800/30 cursor-pointer transition-colors group"
+                className="hover:bg-gray-800/30 cursor-pointer transition-colors"
                 onClick={() => setSelected(t)}
               >
-                <td className="px-4 py-4 text-xs text-gray-500 whitespace-nowrap">{t.date}</td>
+                <td className="px-4 py-4 text-xs text-gray-500">{t.date}</td>
                 <td className="px-4 py-4 text-sm font-semibold text-gray-200">{t.description}</td>
                 <td className={`px-4 py-4 text-sm font-bold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>
                    {t.type === 'income' ? `+ $${t.amount.toLocaleString()}` : `- $${t.amount.toLocaleString()}`}
@@ -114,9 +131,8 @@ const TransactionTable = () => {
                    </span>
                 </td>
                 {role === "admin" && (
-                  <td className="px-4 py-4">
+                  <td className="px-4 py-4 text-center">
                     <div className="flex justify-center gap-3">
-                      <button className="text-xs text-blue-400 hover:text-blue-300 font-bold transition-colors">Edit</button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }}
                         className="text-xs text-gray-500 hover:text-red-400 font-bold transition-colors"
@@ -132,15 +148,23 @@ const TransactionTable = () => {
         </table>
       </div>
 
-      {/* Modal logic stays here... */}
+      {/* ❌ Empty State */}
+      {filtered.length === 0 && (
+        <div className="text-center py-10 text-gray-500 text-sm italic">
+          No transactions found.
+        </div>
+      )}
+
+      {/* ✅ Detail Modal */}
       {selected && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-[#111827] border border-gray-800 p-8 rounded-3xl w-full max-w-md shadow-2xl">
+          <div className="bg-[#111827] border border-gray-800 p-8 rounded-3xl w-full max-w-md">
             <h2 className="text-xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Transaction Details</h2>
-            <div className="space-y-4 text-gray-300">
-               <p><span className="text-gray-500">Desc:</span> {selected.description}</p>
-               <p><span className="text-gray-500">Amount:</span> ${selected.amount}</p>
-               <p><span className="text-gray-500">Type:</span> {selected.type}</p>
+            <div className="space-y-4 text-gray-300 text-sm">
+               <p><span className="text-gray-500">Date:</span> {selected.date}</p>
+               <p><span className="text-gray-500">Description:</span> {selected.description}</p>
+               <p><span className="text-gray-500 font-bold">Amount:</span> ${selected.amount}</p>
+               <p><span className="text-gray-500">Category:</span> {selected.category}</p>
             </div>
             <button className="mt-8 w-full bg-blue-600 py-3 rounded-xl font-bold" onClick={() => setSelected(null)}>Close</button>
           </div>
