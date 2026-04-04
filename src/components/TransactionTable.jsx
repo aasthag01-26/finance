@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
+import Papa from "papaparse";
 
 const TransactionTable = () => {
   const { transactions, setTransactions, role } = useContext(AppContext);
@@ -19,7 +20,37 @@ const TransactionTable = () => {
 
   // 📤 Export logic
   const handleExport = () => {
-    alert("Exporting data to CSV...");
+    const csv = Papa.unparse(transactions);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "transactions.csv");
+    link.click();
+  };
+
+  // 📥 Import logic
+  const handleImport = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          const newData = results.data.map((row, index) => ({
+            id: Date.now() + index,
+            date: row.Date || new Date().toISOString().split('T')[0],
+            description: row.Description || "Imported Data",
+            amount: parseFloat(row.Amount) || 0,
+            category: row.Category || "Other",
+            type: row.Type?.toLowerCase() === "income" ? "income" : "expense"
+          }));
+          
+          setTransactions([...transactions, ...newData]);
+          alert(`${newData.length} transactions imported successfully!`);
+        },
+      });
+    }
   };
 
   return (
@@ -36,15 +67,24 @@ const TransactionTable = () => {
           />
         </div>
 
-        <button
-          onClick={handleExport}
-          className="w-full md:w-auto bg-gray-800 hover:bg-gray-700 text-gray-300 px-6 py-2 rounded-xl border border-gray-700 transition-all text-sm font-medium flex items-center justify-center gap-2"
-        >
-          <span>Export CSV</span>
-        </button>
+        <div className="flex gap-3 w-full md:w-auto">
+          {/* 📥 Import Label (acts as button) */}
+          <label className="flex-1 md:flex-none cursor-pointer bg-blue-600/10 border border-blue-500/30 text-blue-400 px-6 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2">
+            <span>Import CSV</span>
+            <input type="file" accept=".csv" onChange={handleImport} className="hidden" />
+          </label>
+
+          {/* 📤 Export Button */}
+          <button
+            onClick={handleExport}
+            className="flex-1 md:flex-none bg-gray-800 hover:bg-gray-700 text-gray-300 px-6 py-2 rounded-xl border border-gray-700 transition-all text-sm font-medium flex items-center justify-center gap-2"
+          >
+            <span>Export CSV</span>
+          </button>
+        </div>
       </div>
 
-      {/* 📊 Table Wrapper - FIXED FOR MOBILE */}
+      {/* 📊 Table Wrapper */}
       <div className="overflow-x-auto rounded-xl">
         <table className="w-full text-left border-collapse min-w-[700px]"> 
           <thead>
@@ -56,7 +96,6 @@ const TransactionTable = () => {
               {role === "admin" && <th className="px-4 py-4 text-center">Actions</th>}
             </tr>
           </thead>
-
           <tbody className="divide-y divide-gray-800">
             {filtered.map((t) => (
               <tr 
@@ -74,14 +113,10 @@ const TransactionTable = () => {
                      {t.category}
                    </span>
                 </td>
-
-                {/* 🔐 Admin Actions */}
                 {role === "admin" && (
                   <td className="px-4 py-4">
                     <div className="flex justify-center gap-3">
-                      <button className="text-xs text-blue-400 hover:text-blue-300 font-bold transition-colors">
-                        Edit
-                      </button>
+                      <button className="text-xs text-blue-400 hover:text-blue-300 font-bold transition-colors">Edit</button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }}
                         className="text-xs text-gray-500 hover:text-red-400 font-bold transition-colors"
@@ -97,48 +132,22 @@ const TransactionTable = () => {
         </table>
       </div>
 
-      {/* ❌ Empty State */}
-      {filtered.length === 0 && (
-        <div className="text-center py-10">
-          <p className="text-gray-500 text-sm">No transactions found matching "{search}"</p>
-        </div>
-      )}
-
-      {/* ✅ Modal (Details View) */}
+      {/* Modal logic stays here... */}
       {selected && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-[#111827] border border-gray-800 p-8 rounded-3xl w-full max-w-md shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div className="bg-[#111827] border border-gray-800 p-8 rounded-3xl w-full max-w-md shadow-2xl">
             <h2 className="text-xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Transaction Details</h2>
-            
-            <div className="space-y-4">
-              <DetailRow label="Description" value={selected.description} />
-              <DetailRow label="Amount" value={`$${selected.amount}`} isAmount type={selected.type} />
-              <DetailRow label="Category" value={selected.category} isTag />
-              <DetailRow label="Type" value={selected.type} />
-              <DetailRow label="Date" value={selected.date} />
+            <div className="space-y-4 text-gray-300">
+               <p><span className="text-gray-500">Desc:</span> {selected.description}</p>
+               <p><span className="text-gray-500">Amount:</span> ${selected.amount}</p>
+               <p><span className="text-gray-500">Type:</span> {selected.type}</p>
             </div>
-
-            <button
-              className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-900/20"
-              onClick={() => setSelected(null)}
-            >
-              Close
-            </button>
+            <button className="mt-8 w-full bg-blue-600 py-3 rounded-xl font-bold" onClick={() => setSelected(null)}>Close</button>
           </div>
         </div>
       )}
     </div>
   );
 };
-
-// Helper Component for Modal Rows
-const DetailRow = ({ label, value, isAmount, type, isTag }) => (
-  <div className="flex justify-between items-center py-1">
-    <span className="text-gray-500 text-sm">{label}</span>
-    <span className={`text-sm font-semibold ${isAmount ? (type === 'income' ? 'text-green-400' : 'text-red-400') : 'text-gray-200'} ${isTag ? 'bg-gray-800 px-2 py-1 rounded text-xs border border-gray-700' : ''}`}>
-      {value}
-    </span>
-  </div>
-);
 
 export default TransactionTable;
