@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react"; // Added useEffect
 import { AppContext } from "../context/AppContext";
 import TransactionTable from "../components/TransactionTable";
 import AddTransactionModal from "../components/AddTransactionModal";
@@ -12,6 +12,18 @@ const Dashboard = () => {
   const [openModal, setOpenModal] = useState(false);
   const [showAudit, setShowAudit] = useState(false);
 
+  // 👤 1. User Name State (LocalStorage se load karega)
+  const [userName, setUserName] = useState(localStorage.getItem("dashboard_user") || "Aastha");
+
+  // Function to update name
+  const handleNameChange = () => {
+    const newName = prompt("Enter your name:", userName);
+    if (newName && newName.trim() !== "") {
+      setUserName(newName);
+      localStorage.setItem("dashboard_user", newName);
+    }
+  };
+
   // --- Dynamic Logic ---
   const totalIncome = transactions
     .filter(t => t.type === "income")
@@ -23,7 +35,6 @@ const Dashboard = () => {
 
   const balance = totalIncome - totalExpenses;
 
-  // 1. Logic for Category Breakdown
   const categories = ["Food", "Transport", "Shopping", "Entertainment"];
   const categorySummary = categories.map(cat => ({
     name: cat,
@@ -32,11 +43,9 @@ const Dashboard = () => {
       .reduce((acc, t) => acc + t.amount, 0)
   })).filter(c => c.amount > 0);
 
-  // 2. Saving Goal Logic
   const targetGoal = 10000;
   const progressPercent = Math.max(0, Math.min((balance / targetGoal) * 100, 100));
 
-  // 3. Greeting Logic
   const getTimeGreeting = () => {
     const hours = new Date().getHours();
     if (hours < 12) return "Good Morning";
@@ -51,8 +60,13 @@ const Dashboard = () => {
         {/* 🔝 Topbar */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
-              {getTimeGreeting()}, Aastha!
+            {/* 👤 Clickable Name for Personalization */}
+            <h1 
+              className="text-3xl font-extrabold tracking-tight cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-2"
+              onClick={handleNameChange}
+              title="Click to change name"
+            >
+              {getTimeGreeting()}, <span className="text-blue-500">{userName}!</span>
             </h1>
             <p className="text-gray-500 text-sm mt-1">Manage your wealth with precision</p>
           </div>
@@ -76,6 +90,8 @@ const Dashboard = () => {
 
         {/* 🚀 Main Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* LEFT COLUMN (8 Units) */}
           <div className="lg:col-span-8 space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SummaryCard title="Total Balance" value={`$${balance.toLocaleString()}`} />
@@ -83,7 +99,7 @@ const Dashboard = () => {
               <SummaryCard title="Total Expenses" value={`$${totalExpenses.toLocaleString()}`} />
             </div>
 
-            <div className="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-xl">
+            <div className={`p-6 rounded-2xl border shadow-xl transition-all ${dark ? "bg-[#111827] border-gray-800" : "bg-white border-gray-200"}`}>
               <h3 className="text-sm font-bold text-gray-500 uppercase mb-4">Revenue Analytics</h3>
               <Charts />
             </div>
@@ -104,27 +120,30 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* RIGHT COLUMN */}
+          {/* RIGHT COLUMN (4 Units) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-[#111827] p-6 rounded-2xl border border-gray-800">
+            <div className={`p-6 rounded-2xl border transition-all ${dark ? "bg-[#111827] border-gray-800" : "bg-white border-gray-200"}`}>
               <h3 className="text-xs font-bold mb-4 text-gray-400 uppercase tracking-widest">Savings Goal: $10k</h3>
               <div className="flex justify-between mb-2">
                 <span className="text-xs text-gray-400">Current Progress</span>
                 <span className="text-xs font-bold text-blue-500">{progressPercent.toFixed(1)}%</span>
               </div>
               <div className="w-full bg-gray-900 rounded-full h-2.5">
-                <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-1000" style={{ width: `${progressPercent}%` }}></div>
+                <div 
+                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-1000 shadow-[0_0_8px_rgba(37,99,235,0.6)]" 
+                  style={{ width: `${progressPercent}%` }}
+                ></div>
               </div>
             </div>
 
-            <div className="bg-[#111827] p-6 rounded-2xl border border-gray-800 min-h-[250px]">
+            <div className={`p-6 rounded-2xl border min-h-[250px] transition-all ${dark ? "bg-[#111827] border-gray-800" : "bg-white border-gray-200"}`}>
               <h3 className="text-xs font-bold mb-6 uppercase tracking-widest text-gray-400">Spending Breakdown</h3>
               <div className="space-y-5">
                 {categorySummary.map((item, i) => (
                   <div key={i} className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                      <span className="text-sm text-gray-200 font-medium">{item.name}</span>
+                      <span className={`text-sm font-medium ${dark ? "text-gray-300" : "text-gray-600"}`}>{item.name}</span>
                     </div>
                     <span className="text-sm font-bold">${item.amount.toLocaleString()}</span>
                   </div>
