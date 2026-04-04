@@ -2,27 +2,27 @@
 
 A premium, interactive, and AI-inspired **Financial Analytics Dashboard** built with **React.js** and **Tailwind CSS**. Designed to help users visualize cash flow, manage expenses, and receive smart financial audits with a modern Glassmorphism UI.
 
-** [Live Demo on Netlify](https://paisax.netlify.app/)** 
+ [Live Demo on Netlify](https://paisax.netlify.app/)
 
 ---
 
 ## 🚀 Key Features (The X-Factor)
 
-* ** Smart AI Audit Report:** An interactive analysis modal that calculates:
+*  Smart AI Audit Report: An interactive analysis modal that calculates:
     * **Emergency Fund Requirements:** Calculates a 6-month safety net based on spending.
     * **Saving Goal Velocity:** Real-time prediction of months needed to reach the $10k target.
     * **Cash Flow Health:** Dynamic feedback based on income-to-expense ratios.
-* ** Context-Aware Greetings:** Personalized header that greets the user based on the time of day (*Good Morning/Afternoon/Evening*).
-* ** Savings Goal Tracker:** A dynamic progress bar visualizing real-time proximity to financial targets.
-* ** Role-Based UI (RBAC Simulation):**
+*  Context-Aware Greetings: Personalized header that greets the user based on the time of day (*Good Morning/Afternoon/Evening*).
+*  Savings Goal Tracker: A dynamic progress bar visualizing real-time proximity to financial targets.
+*  Role-Based UI (RBAC Simulation):
     * **Viewer Mode:** Secure, read-only access to analytics.
     * **Admin Mode:** Full CRUD capabilities (Add, Edit, and Delete transactions).
-* ** Advanced Data Visualization:**
+*  Advanced Data Visualization:
     * **Balance Trend:** Multi-line charts comparing monthly cash flow using **Recharts**.
     * **Spending Breakdown:** A clean, filtered list of expenses for precise category tracking.
-* ** Adaptive Theme Engine:** Seamless **Dark/Light Mode** transition with optimized contrast for "Smart Insights" components.
-* ** Mobile-First Responsive Design:** Fully optimized table with horizontal scroll and stackable grid layouts.
-* ** Persistent Storage:** Integrated **Browser LocalStorage** to ensure data stays safe across sessions.
+*  Adaptive Theme Engine: Seamless **Dark/Light Mode** transition with optimized contrast for "Smart Insights" components.
+*  Mobile-First Responsive Design: Fully optimized table with horizontal scroll and stackable grid layouts.
+*  Persistent Storage: Integrated **Browser LocalStorage** to ensure data stays safe across sessions.
 
 ---
 
