@@ -2,7 +2,7 @@
 
 A premium, interactive, and AI-inspired **Financial Analytics Dashboard** built with **React.js** and **Tailwind CSS**. Designed to help users visualize cash flow, manage expenses, and receive smart financial audits with a modern Glassmorphism UI.
 
-**🌐 [Live Demo on Netlify](https://paisa-x.netlify.app)** *(Update this with your link)*
+**🌐 [Live Demo on Netlify](https://paisa-x.netlify.app)** 
 
 ---
 
